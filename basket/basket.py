@@ -11,3 +11,16 @@ class Basket():
         if 'skey' not in request.session:
             basket = self.session['skey'] = {} #setup this dictionary, add some data
         self.basket = basket 
+
+
+    def add(self, product):
+        '''
+        Adding and updating the users basket session data
+        '''
+
+        product_id = product.id
+        
+        if product_id not in self.basket:
+            self.basket[product_id] = {'price': float(product.price)}
+        
+        self.session.modified = True
