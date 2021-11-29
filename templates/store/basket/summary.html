@@ -41,7 +41,7 @@
                                     <option value="4">4</option>
                                 </select>
                                 <button type = "button" id="add-button" value = "{{product.id}}" class = "btn btn-outline-secondary btn-sm">Update</button>
-                                <button type = "button" id="delete-button" value = "{{product.id}}" class = "btn btn-outline-secondary btn-sm">Delete</button>
+                                <button type = "button" id = "id-button" data-index="{{product.id}}" class = "btn btn-outline-secondary btn-sm delete-button">Delete</button>
                             </div>
                             <div class="col-6 text-end">
                                 <button type="button" id="add-button" value="{{product.id}}"
@@ -62,5 +62,24 @@
         </div>
     </div>
 </main>
+
+<script>
+    $(document).on('click', '.delete-button', function(e){
+        e.preventDefault();
+        $.ajax({
+            type: 'POST',
+            url: '{% url "basket:basket_delete" %}',
+            data: {
+                productid: $(this).data('index'),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                action: 'post'
+            },
+            success: function(json){
+                console.log(json)
+            },
+            error: function(xhr, errmsg, err){}
+        });
+    })
+</script>
 
 {% endblock content %}
