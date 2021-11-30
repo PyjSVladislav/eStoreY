@@ -1,4 +1,6 @@
 from django.test import TestCase
+from importlib import import_module
+from django.conf import settings
 
 from django.contrib.auth.models import User
 from store.models import Category, Product
@@ -13,7 +15,6 @@ class TestViewResponses(TestCase):
 
     def setUp(self):
         self.c = Client()
-        self.factory = RequestFactory()
         User.objects.create(username='admin')
         Category.objects.create(name='django', slug='django')
         Product.objects.create(category_id = 1, title = 'django beginners',
@@ -57,17 +58,21 @@ class TestViewResponses(TestCase):
     def test_homepage_html(self):
 
         request = HttpRequest()
+        engine = import_module(settings.SESSION_ENGINE)
+        request.session = engine.SessionStore()
         response = all_products(request)
         html = response.content.decode('utf8')
-        self.assertIn('<title>\n      Home Page\n    </title>', html)
+        self.assertIn('<title>Home Page</title>', html)
         self.assertTrue(html.startswith('\n<!DOCTYPE html>\n'))
         self.assertEqual(response.status_code, 200)
 
-    def test_view_function(self):
+    
 
-        request = self.factory.get('/item/django-beginners')
-        response = all_products(request)
-        html = response.content.decode('utf8')
-        self.assertIn('<title>\n      Home Page\n    </title>', html)
-        self.assertTrue(html.startswith('\n<!DOCTYPE html>\n'))
-        self.assertEqual(response.status_code, 200)
+    # def test_view_function(self):
+
+    #     request = self.factory.get('/item/django-beginners')
+    #     response = all_products(request)
+    #     html = response.content.decode('utf8')
+    #     self.assertIn('<title>\n      Home Page\n    </title>', html)
+    #     self.assertTrue(html.startswith('\n<!DOCTYPE html>\n'))
+    #     self.assertEqual(response.status_code, 200)
